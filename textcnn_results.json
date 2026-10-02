@@ -1,0 +1,78 @@
+{
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.6440880386776394,
+      "val_loss": 0.4999929822921753,
+      "val_acc": 0.7824,
+      "epoch_time_sec": 61.2347617149353
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.49430928206973607,
+      "val_loss": 0.40707984380722045,
+      "val_acc": 0.8232,
+      "epoch_time_sec": 17.871002674102783
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.42502081000539993,
+      "val_loss": 0.37016074180603026,
+      "val_acc": 0.8376,
+      "epoch_time_sec": 18.66292095184326
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.3628164485666487,
+      "val_loss": 0.3446522666454315,
+      "val_acc": 0.8556,
+      "epoch_time_sec": 18.622207403182983
+    }
+  ],
+  "val": {
+    "accuracy": 0.8556,
+    "precision": 0.8740679370339686,
+    "recall": 0.8346518987341772,
+    "f1": 0.8539053014973695,
+    "loss": 0.3446522666454315,
+    "confusion_matrix": [
+      [
+        1084,
+        152
+      ],
+      [
+        209,
+        1055
+      ]
+    ]
+  },
+  "test": {
+    "accuracy": 0.84848,
+    "precision": 0.8584005265756129,
+    "recall": 0.83464,
+    "f1": 0.8463535328952706,
+    "loss": 0.3434903427028656,
+    "confusion_matrix": [
+      [
+        10779,
+        1721
+      ],
+      [
+        2067,
+        10433
+      ]
+    ]
+  },
+  "total_train_time_sec": 116.39115285873413,
+  "vocab_size": 20000,
+  "max_len": 200,
+  "embed_dim": 100,
+  "num_filters": 100,
+  "kernel_sizes": [
+    3,
+    4,
+    5
+  ],
+  "epochs": 4,
+  "embedding_type": "trainable (random init, NOT pretrained GloVe)"
+}
