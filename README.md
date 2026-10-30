@@ -14,7 +14,10 @@ Trains and compares four deep learning architectures for binary sentiment classi
 | **BiLSTM** | Madhavan K | GloVe embeddings → single-layer BiLSTM → concat final states |
 | **DistilBERT** | Ayrton Pulikottil | Fine-tuned `distilbert-base-uncased`, 3 epochs, max_len 256 |
 
-The full write-up (methodology, results, error analysis, references) is in **[REPORT.md](REPORT.md)**.
+The full write-up (methodology, results, error analysis, references) is available as a
+submission-ready PDF: **[final_report.pdf](final_report.pdf)**. Its editable source is
+**[final_report.tex](final_report.tex)**; the project-oriented Markdown version remains
+in **[REPORT.md](REPORT.md)**.
 
 ## Results
 

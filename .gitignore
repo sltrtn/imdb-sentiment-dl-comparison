@@ -8,3 +8,7 @@ __pycache__/
 .venv/
 venv/
 models/
+*.aux
+*.log
+*.out
+*.toc
