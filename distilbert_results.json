@@ -1,0 +1,241 @@
+{
+  "model": "DistilBERT",
+  "selection_metric": "val_f1",
+  "tuning": [
+    {
+      "name": "distilbert-lr2e-05",
+      "config": {
+        "model_name": "distilbert-base-uncased",
+        "max_len": 256,
+        "batch_size": 32,
+        "lr": 2e-05,
+        "weight_decay": 0.01,
+        "warmup_ratio": 0.1,
+        "epochs": 3,
+        "pretrained": "distilbert-base-uncased (fine-tuned)"
+      },
+      "n_params": 66955010,
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.3400167534722222,
+          "val_loss": 0.22895233154296876,
+          "val_acc": 0.9028,
+          "val_f1": 0.9033797216699802,
+          "epoch_time_sec": 214.61669445037842
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.17892095404730904,
+          "val_loss": 0.23480767822265625,
+          "val_acc": 0.9084,
+          "val_f1": 0.9103016059537798,
+          "epoch_time_sec": 225.32072138786316
+        },
+        {
+          "epoch": 3,
+          "train_loss": 0.109837501695421,
+          "val_loss": 0.2725833679199219,
+          "val_acc": 0.9156,
+          "val_f1": 0.9148163100524829,
+          "epoch_time_sec": 202.95195412635803
+        }
+      ],
+      "best_epoch": 3,
+      "train_time_sec": 643.1693131923676,
+      "val": {
+        "accuracy": 0.9156,
+        "precision": 0.9129734085414988,
+        "recall": 0.9166666666666666,
+        "f1": 0.9148163100524829,
+        "confusion_matrix": [
+          [
+            1156,
+            108
+          ],
+          [
+            103,
+            1133
+          ]
+        ],
+        "roc_auc": 0.9717202925935029,
+        "loss": 0.2725833679199219
+      },
+      "test": {
+        "accuracy": 0.91412,
+        "precision": 0.9174260140311266,
+        "recall": 0.91016,
+        "f1": 0.9137785631099152,
+        "confusion_matrix": [
+          [
+            11476,
+            1024
+          ],
+          [
+            1123,
+            11377
+          ]
+        ],
+        "roc_auc": 0.9722646112000001,
+        "loss": 0.2716453051745892
+      }
+    },
+    {
+      "name": "distilbert-lr3e-05",
+      "config": {
+        "model_name": "distilbert-base-uncased",
+        "max_len": 256,
+        "batch_size": 32,
+        "lr": 3e-05,
+        "weight_decay": 0.01,
+        "warmup_ratio": 0.1,
+        "epochs": 3,
+        "pretrained": "distilbert-base-uncased (fine-tuned)"
+      },
+      "n_params": 66955010,
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.33232217678493925,
+          "val_loss": 0.23316546630859375,
+          "val_acc": 0.9056,
+          "val_f1": 0.9068666140489345,
+          "epoch_time_sec": 203.1791534423828
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.16508484802246093,
+          "val_loss": 0.25046322021484374,
+          "val_acc": 0.9088,
+          "val_f1": 0.9107282693813625,
+          "epoch_time_sec": 205.1386148929596
+        },
+        {
+          "epoch": 3,
+          "train_loss": 0.08243657514784071,
+          "val_loss": 0.3106423126220703,
+          "val_acc": 0.9132,
+          "val_f1": 0.9119675456389452,
+          "epoch_time_sec": 205.271164894104
+        }
+      ],
+      "best_epoch": 3,
+      "train_time_sec": 613.7919652462006,
+      "val": {
+        "accuracy": 0.9132,
+        "precision": 0.9145646867371847,
+        "recall": 0.9093851132686084,
+        "f1": 0.9119675456389452,
+        "confusion_matrix": [
+          [
+            1159,
+            105
+          ],
+          [
+            112,
+            1124
+          ]
+        ],
+        "roc_auc": 0.971548431035189,
+        "loss": 0.3106423126220703
+      },
+      "test": {
+        "accuracy": 0.9136,
+        "precision": 0.9171373245118606,
+        "recall": 0.90936,
+        "f1": 0.913232104121475,
+        "confusion_matrix": [
+          [
+            11473,
+            1027
+          ],
+          [
+            1133,
+            11367
+          ]
+        ],
+        "roc_auc": 0.9723397344,
+        "loss": 0.306065367732048
+      }
+    }
+  ],
+  "best": "distilbert-lr2e-05",
+  "val": {
+    "accuracy": 0.9156,
+    "precision": 0.9129734085414988,
+    "recall": 0.9166666666666666,
+    "f1": 0.9148163100524829,
+    "confusion_matrix": [
+      [
+        1156,
+        108
+      ],
+      [
+        103,
+        1133
+      ]
+    ],
+    "roc_auc": 0.9717202925935029,
+    "loss": 0.2725833679199219
+  },
+  "test": {
+    "accuracy": 0.91412,
+    "precision": 0.9174260140311266,
+    "recall": 0.91016,
+    "f1": 0.9137785631099152,
+    "confusion_matrix": [
+      [
+        11476,
+        1024
+      ],
+      [
+        1123,
+        11377
+      ]
+    ],
+    "roc_auc": 0.9722646112000001,
+    "loss": 0.2716453051745892
+  },
+  "config": {
+    "model_name": "distilbert-base-uncased",
+    "max_len": 256,
+    "batch_size": 32,
+    "lr": 2e-05,
+    "weight_decay": 0.01,
+    "warmup_ratio": 0.1,
+    "epochs": 3,
+    "pretrained": "distilbert-base-uncased (fine-tuned)"
+  },
+  "n_params": 66955010,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.3400167534722222,
+      "val_loss": 0.22895233154296876,
+      "val_acc": 0.9028,
+      "val_f1": 0.9033797216699802,
+      "epoch_time_sec": 214.61669445037842
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.17892095404730904,
+      "val_loss": 0.23480767822265625,
+      "val_acc": 0.9084,
+      "val_f1": 0.9103016059537798,
+      "epoch_time_sec": 225.32072138786316
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.109837501695421,
+      "val_loss": 0.2725833679199219,
+      "val_acc": 0.9156,
+      "val_f1": 0.9148163100524829,
+      "epoch_time_sec": 202.95195412635803
+    }
+  ],
+  "best_epoch": 3,
+  "total_train_time_sec": 643.1693131923676,
+  "total_tuning_time_sec": 1256.9612784385681,
+  "device": "cuda",
+  "seed": 42
+}

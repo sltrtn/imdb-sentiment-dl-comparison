@@ -1,37 +1,219 @@
 {
+  "model": "MLP + TF-IDF",
+  "selection_metric": "val_f1",
+  "tuning": [
+    {
+      "name": "mlp-128-a1e-4",
+      "config": {
+        "hidden_layer_sizes": [
+          128
+        ],
+        "alpha": 0.0001,
+        "activation": "relu",
+        "solver": "adam",
+        "batch_size": 128,
+        "learning_rate_init": 0.001,
+        "max_iter": 30,
+        "early_stopping": true,
+        "features": "TF-IDF unigram+bigram, 20000 features, min_df=2, english stop-words"
+      },
+      "n_params": 2560257,
+      "n_iter": 7,
+      "train_time_sec": 71.50684332847595,
+      "val": {
+        "accuracy": 0.8896,
+        "precision": 0.868663594470046,
+        "recall": 0.9150485436893204,
+        "f1": 0.8912529550827423,
+        "confusion_matrix": [
+          [
+            1093,
+            171
+          ],
+          [
+            105,
+            1131
+          ]
+        ],
+        "roc_auc": 0.9582494828151243
+      },
+      "test": {
+        "accuracy": 0.877,
+        "precision": 0.8784228699911668,
+        "recall": 0.87512,
+        "f1": 0.8767683244499659,
+        "confusion_matrix": [
+          [
+            10986,
+            1514
+          ],
+          [
+            1561,
+            10939
+          ]
+        ],
+        "roc_auc": 0.9472222784
+      }
+    },
+    {
+      "name": "mlp-256-a1e-4",
+      "config": {
+        "hidden_layer_sizes": [
+          256
+        ],
+        "alpha": 0.0001,
+        "activation": "relu",
+        "solver": "adam",
+        "batch_size": 128,
+        "learning_rate_init": 0.001,
+        "max_iter": 30,
+        "early_stopping": true,
+        "features": "TF-IDF unigram+bigram, 20000 features, min_df=2, english stop-words"
+      },
+      "n_params": 5120513,
+      "n_iter": 6,
+      "train_time_sec": 148.54090189933777,
+      "val": {
+        "accuracy": 0.8856,
+        "precision": 0.8620426829268293,
+        "recall": 0.9150485436893204,
+        "f1": 0.8877551020408163,
+        "confusion_matrix": [
+          [
+            1083,
+            181
+          ],
+          [
+            105,
+            1131
+          ]
+        ],
+        "roc_auc": 0.9572291948301996
+      },
+      "test": {
+        "accuracy": 0.87564,
+        "precision": 0.8771788898706724,
+        "recall": 0.8736,
+        "f1": 0.8753857870054912,
+        "confusion_matrix": [
+          [
+            10971,
+            1529
+          ],
+          [
+            1580,
+            10920
+          ]
+        ],
+        "roc_auc": 0.948496512
+      }
+    },
+    {
+      "name": "mlp-128-a1e-3",
+      "config": {
+        "hidden_layer_sizes": [
+          128
+        ],
+        "alpha": 0.001,
+        "activation": "relu",
+        "solver": "adam",
+        "batch_size": 128,
+        "learning_rate_init": 0.001,
+        "max_iter": 30,
+        "early_stopping": true,
+        "features": "TF-IDF unigram+bigram, 20000 features, min_df=2, english stop-words"
+      },
+      "n_params": 2560257,
+      "n_iter": 7,
+      "train_time_sec": 73.25484585762024,
+      "val": {
+        "accuracy": 0.89,
+        "precision": 0.8687643898695319,
+        "recall": 0.9158576051779935,
+        "f1": 0.8916896415911776,
+        "confusion_matrix": [
+          [
+            1093,
+            171
+          ],
+          [
+            104,
+            1132
+          ]
+        ],
+        "roc_auc": 0.9583102904428331
+      },
+      "test": {
+        "accuracy": 0.87744,
+        "precision": 0.8780448717948718,
+        "recall": 0.87664,
+        "f1": 0.877341873498799,
+        "confusion_matrix": [
+          [
+            10978,
+            1522
+          ],
+          [
+            1542,
+            10958
+          ]
+        ],
+        "roc_auc": 0.9476846592
+      }
+    }
+  ],
+  "best": "mlp-128-a1e-3",
   "val": {
-    "accuracy": 0.898,
-    "precision": 0.8865900383141763,
-    "recall": 0.9153481012658228,
-    "f1": 0.9007395873880888,
+    "accuracy": 0.89,
+    "precision": 0.8687643898695319,
+    "recall": 0.9158576051779935,
+    "f1": 0.8916896415911776,
     "confusion_matrix": [
       [
-        1088,
-        148
+        1093,
+        171
       ],
       [
-        107,
-        1157
+        104,
+        1132
       ]
-    ]
+    ],
+    "roc_auc": 0.9583102904428331
   },
   "test": {
-    "accuracy": 0.87548,
-    "precision": 0.8715857810149632,
-    "recall": 0.88072,
-    "f1": 0.8761290836019259,
+    "accuracy": 0.87744,
+    "precision": 0.8780448717948718,
+    "recall": 0.87664,
+    "f1": 0.877341873498799,
     "confusion_matrix": [
       [
-        10878,
-        1622
+        10978,
+        1522
       ],
       [
-        1491,
-        11009
+        1542,
+        10958
       ]
-    ]
+    ],
+    "roc_auc": 0.9476846592
   },
-  "train_time_sec": 73.44150638580322,
+  "config": {
+    "hidden_layer_sizes": [
+      128
+    ],
+    "alpha": 0.001,
+    "activation": "relu",
+    "solver": "adam",
+    "batch_size": 128,
+    "learning_rate_init": 0.001,
+    "max_iter": 30,
+    "early_stopping": true,
+    "features": "TF-IDF unigram+bigram, 20000 features, min_df=2, english stop-words"
+  },
+  "n_params": 2560257,
+  "train_time_sec": 73.25484585762024,
+  "total_tuning_time_sec": 293.30259108543396,
   "n_iter": 7,
-  "vocab_size": 20000
+  "vocab_size": 20000,
+  "seed": 42
 }

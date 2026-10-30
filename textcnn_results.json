@@ -1,78 +1,447 @@
 {
+  "model": "TextCNN",
+  "selection_metric": "val_f1",
+  "tuning": [
+    {
+      "name": "textcnn-rand-200",
+      "config": {
+        "embed_init": "random",
+        "freeze_embeddings": false,
+        "max_len": 200,
+        "vocab_size": 20000,
+        "embed_dim": 100,
+        "num_filters": 100,
+        "kernel_sizes": [
+          3,
+          4,
+          5
+        ],
+        "dropout": 0.5,
+        "lr": 0.001,
+        "batch_size": 64,
+        "glove_coverage": 0.0,
+        "embedding_type": "trainable (random init)"
+      },
+      "n_params": 2120601,
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.6364211124367184,
+          "val_loss": 0.4943843117713928,
+          "val_acc": 0.77,
+          "val_f1": 0.788680632120544,
+          "epoch_time_sec": 3.42144775390625
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.5024804605960846,
+          "val_loss": 0.41625802626609804,
+          "val_acc": 0.82,
+          "val_f1": 0.8235294117647058,
+          "epoch_time_sec": 2.6287992000579834
+        },
+        {
+          "epoch": 3,
+          "train_loss": 0.4368667161729601,
+          "val_loss": 0.378955522108078,
+          "val_acc": 0.832,
+          "val_f1": 0.8429319371727748,
+          "epoch_time_sec": 2.6500065326690674
+        },
+        {
+          "epoch": 4,
+          "train_loss": 0.37478652103212146,
+          "val_loss": 0.3390289785861969,
+          "val_acc": 0.854,
+          "val_f1": 0.8555599525128611,
+          "epoch_time_sec": 2.7489941120147705
+        },
+        {
+          "epoch": 5,
+          "train_loss": 0.31302498887909785,
+          "val_loss": 0.34645557384490966,
+          "val_acc": 0.846,
+          "val_f1": 0.8562896603210153,
+          "epoch_time_sec": 2.730053186416626
+        },
+        {
+          "epoch": 6,
+          "train_loss": 0.26101905204719966,
+          "val_loss": 0.3251407552719116,
+          "val_acc": 0.8604,
+          "val_f1": 0.853545950482585,
+          "epoch_time_sec": 2.7071495056152344
+        }
+      ],
+      "best_epoch": 5,
+      "train_time_sec": 16.915305137634277,
+      "val": {
+        "accuracy": 0.846,
+        "precision": 0.7948717948717948,
+        "recall": 0.9279935275080906,
+        "f1": 0.8562896603210153,
+        "confusion_matrix": [
+          [
+            968,
+            296
+          ],
+          [
+            89,
+            1147
+          ]
+        ],
+        "roc_auc": 0.9360322958911966,
+        "loss": 0.34645557384490966
+      },
+      "test": {
+        "accuracy": 0.84076,
+        "precision": 0.7924074963959635,
+        "recall": 0.92344,
+        "f1": 0.8529205305353382,
+        "confusion_matrix": [
+          [
+            9476,
+            3024
+          ],
+          [
+            957,
+            11543
+          ]
+        ],
+        "roc_auc": 0.9319187072000001,
+        "loss": 0.35651995916366575
+      }
+    },
+    {
+      "name": "textcnn-glove-200",
+      "config": {
+        "embed_init": "glove",
+        "freeze_embeddings": false,
+        "max_len": 200,
+        "vocab_size": 20000,
+        "embed_dim": 100,
+        "num_filters": 100,
+        "kernel_sizes": [
+          3,
+          4,
+          5
+        ],
+        "dropout": 0.5,
+        "lr": 0.001,
+        "batch_size": 64,
+        "glove_coverage": 0.9575957595759576,
+        "embedding_type": "GloVe glove-wiki-gigaword-100 (fine-tuned)"
+      },
+      "n_params": 2120601,
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.48187426438331604,
+          "val_loss": 0.3506261444568634,
+          "val_acc": 0.8476,
+          "val_f1": 0.8509972624168948,
+          "epoch_time_sec": 2.910137891769409
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.3150707558075587,
+          "val_loss": 0.3219239957332611,
+          "val_acc": 0.8664,
+          "val_f1": 0.8720306513409962,
+          "epoch_time_sec": 2.7154171466827393
+        },
+        {
+          "epoch": 3,
+          "train_loss": 0.22730713998874028,
+          "val_loss": 0.34923412652015684,
+          "val_acc": 0.8532,
+          "val_f1": 0.8645256552233297,
+          "epoch_time_sec": 2.719738245010376
+        },
+        {
+          "epoch": 4,
+          "train_loss": 0.15839685117933486,
+          "val_loss": 0.31962531404495237,
+          "val_acc": 0.8796,
+          "val_f1": 0.8808864265927978,
+          "epoch_time_sec": 2.766862154006958
+        },
+        {
+          "epoch": 5,
+          "train_loss": 0.10089619821707407,
+          "val_loss": 0.3759093885421753,
+          "val_acc": 0.8704,
+          "val_f1": 0.8749034749034749,
+          "epoch_time_sec": 2.7541487216949463
+        },
+        {
+          "epoch": 6,
+          "train_loss": 0.06063361724416415,
+          "val_loss": 0.4151186116218567,
+          "val_acc": 0.8752,
+          "val_f1": 0.8771653543307086,
+          "epoch_time_sec": 2.703428030014038
+        }
+      ],
+      "best_epoch": 4,
+      "train_time_sec": 16.582290649414062,
+      "val": {
+        "accuracy": 0.8796,
+        "precision": 0.8621223857474826,
+        "recall": 0.9004854368932039,
+        "f1": 0.8808864265927978,
+        "confusion_matrix": [
+          [
+            1086,
+            178
+          ],
+          [
+            123,
+            1113
+          ]
+        ],
+        "roc_auc": 0.9449844588505183,
+        "loss": 0.31962531404495237
+      },
+      "test": {
+        "accuracy": 0.85992,
+        "precision": 0.8564976228209191,
+        "recall": 0.86472,
+        "f1": 0.8605891719745223,
+        "confusion_matrix": [
+          [
+            10689,
+            1811
+          ],
+          [
+            1691,
+            10809
+          ]
+        ],
+        "roc_auc": 0.935361184,
+        "loss": 0.34225989812850954
+      }
+    },
+    {
+      "name": "textcnn-glove-300",
+      "config": {
+        "embed_init": "glove",
+        "freeze_embeddings": false,
+        "max_len": 300,
+        "vocab_size": 20000,
+        "embed_dim": 100,
+        "num_filters": 128,
+        "kernel_sizes": [
+          3,
+          4,
+          5
+        ],
+        "dropout": 0.5,
+        "lr": 0.001,
+        "batch_size": 64,
+        "glove_coverage": 0.9575957595759576,
+        "embedding_type": "GloVe glove-wiki-gigaword-100 (fine-tuned)"
+      },
+      "n_params": 2154369,
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.4657709143479665,
+          "val_loss": 0.3259202060699463,
+          "val_acc": 0.858,
+          "val_f1": 0.8533663775299463,
+          "epoch_time_sec": 4.168827533721924
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.2912777408679326,
+          "val_loss": 0.2959772208690643,
+          "val_acc": 0.8776,
+          "val_f1": 0.8825786646201075,
+          "epoch_time_sec": 3.9685778617858887
+        },
+        {
+          "epoch": 3,
+          "train_loss": 0.20854575414922502,
+          "val_loss": 0.37325596494674684,
+          "val_acc": 0.85,
+          "val_f1": 0.8642779587404995,
+          "epoch_time_sec": 4.007299184799194
+        },
+        {
+          "epoch": 4,
+          "train_loss": 0.1386883484893375,
+          "val_loss": 0.28035384998321533,
+          "val_acc": 0.8872,
+          "val_f1": 0.8858299595141701,
+          "epoch_time_sec": 4.021703481674194
+        },
+        {
+          "epoch": 5,
+          "train_loss": 0.08589557274844911,
+          "val_loss": 0.3305076790809631,
+          "val_acc": 0.8876,
+          "val_f1": 0.8912959381044487,
+          "epoch_time_sec": 3.9636194705963135
+        },
+        {
+          "epoch": 6,
+          "train_loss": 0.052396165520615046,
+          "val_loss": 0.36502213916778564,
+          "val_acc": 0.8852,
+          "val_f1": 0.8878468151621727,
+          "epoch_time_sec": 3.9548027515411377
+        }
+      ],
+      "best_epoch": 5,
+      "train_time_sec": 24.117465019226074,
+      "val": {
+        "accuracy": 0.8876,
+        "precision": 0.8539659006671608,
+        "recall": 0.9320388349514563,
+        "f1": 0.8912959381044487,
+        "confusion_matrix": [
+          [
+            1067,
+            197
+          ],
+          [
+            84,
+            1152
+          ]
+        ],
+        "roc_auc": 0.9554945772397689,
+        "loss": 0.3305076790809631
+      },
+      "test": {
+        "accuracy": 0.87184,
+        "precision": 0.8523347483323226,
+        "recall": 0.89952,
+        "f1": 0.8752919196637086,
+        "confusion_matrix": [
+          [
+            10552,
+            1948
+          ],
+          [
+            1256,
+            11244
+          ]
+        ],
+        "roc_auc": 0.9439051392,
+        "loss": 0.3568824732685089
+      }
+    }
+  ],
+  "best": "textcnn-glove-300",
+  "val": {
+    "accuracy": 0.8876,
+    "precision": 0.8539659006671608,
+    "recall": 0.9320388349514563,
+    "f1": 0.8912959381044487,
+    "confusion_matrix": [
+      [
+        1067,
+        197
+      ],
+      [
+        84,
+        1152
+      ]
+    ],
+    "roc_auc": 0.9554945772397689,
+    "loss": 0.3305076790809631
+  },
+  "test": {
+    "accuracy": 0.87184,
+    "precision": 0.8523347483323226,
+    "recall": 0.89952,
+    "f1": 0.8752919196637086,
+    "confusion_matrix": [
+      [
+        10552,
+        1948
+      ],
+      [
+        1256,
+        11244
+      ]
+    ],
+    "roc_auc": 0.9439051392,
+    "loss": 0.3568824732685089
+  },
+  "config": {
+    "embed_init": "glove",
+    "freeze_embeddings": false,
+    "max_len": 300,
+    "vocab_size": 20000,
+    "embed_dim": 100,
+    "num_filters": 128,
+    "kernel_sizes": [
+      3,
+      4,
+      5
+    ],
+    "dropout": 0.5,
+    "lr": 0.001,
+    "batch_size": 64,
+    "glove_coverage": 0.9575957595759576,
+    "embedding_type": "GloVe glove-wiki-gigaword-100 (fine-tuned)"
+  },
+  "n_params": 2154369,
   "history": [
     {
       "epoch": 1,
-      "train_loss": 0.6440880386776394,
-      "val_loss": 0.4999929822921753,
-      "val_acc": 0.7824,
-      "epoch_time_sec": 61.2347617149353
+      "train_loss": 0.4657709143479665,
+      "val_loss": 0.3259202060699463,
+      "val_acc": 0.858,
+      "val_f1": 0.8533663775299463,
+      "epoch_time_sec": 4.168827533721924
     },
     {
       "epoch": 2,
-      "train_loss": 0.49430928206973607,
-      "val_loss": 0.40707984380722045,
-      "val_acc": 0.8232,
-      "epoch_time_sec": 17.871002674102783
+      "train_loss": 0.2912777408679326,
+      "val_loss": 0.2959772208690643,
+      "val_acc": 0.8776,
+      "val_f1": 0.8825786646201075,
+      "epoch_time_sec": 3.9685778617858887
     },
     {
       "epoch": 3,
-      "train_loss": 0.42502081000539993,
-      "val_loss": 0.37016074180603026,
-      "val_acc": 0.8376,
-      "epoch_time_sec": 18.66292095184326
+      "train_loss": 0.20854575414922502,
+      "val_loss": 0.37325596494674684,
+      "val_acc": 0.85,
+      "val_f1": 0.8642779587404995,
+      "epoch_time_sec": 4.007299184799194
     },
     {
       "epoch": 4,
-      "train_loss": 0.3628164485666487,
-      "val_loss": 0.3446522666454315,
-      "val_acc": 0.8556,
-      "epoch_time_sec": 18.622207403182983
+      "train_loss": 0.1386883484893375,
+      "val_loss": 0.28035384998321533,
+      "val_acc": 0.8872,
+      "val_f1": 0.8858299595141701,
+      "epoch_time_sec": 4.021703481674194
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.08589557274844911,
+      "val_loss": 0.3305076790809631,
+      "val_acc": 0.8876,
+      "val_f1": 0.8912959381044487,
+      "epoch_time_sec": 3.9636194705963135
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.052396165520615046,
+      "val_loss": 0.36502213916778564,
+      "val_acc": 0.8852,
+      "val_f1": 0.8878468151621727,
+      "epoch_time_sec": 3.9548027515411377
     }
   ],
-  "val": {
-    "accuracy": 0.8556,
-    "precision": 0.8740679370339686,
-    "recall": 0.8346518987341772,
-    "f1": 0.8539053014973695,
-    "loss": 0.3446522666454315,
-    "confusion_matrix": [
-      [
-        1084,
-        152
-      ],
-      [
-        209,
-        1055
-      ]
-    ]
-  },
-  "test": {
-    "accuracy": 0.84848,
-    "precision": 0.8584005265756129,
-    "recall": 0.83464,
-    "f1": 0.8463535328952706,
-    "loss": 0.3434903427028656,
-    "confusion_matrix": [
-      [
-        10779,
-        1721
-      ],
-      [
-        2067,
-        10433
-      ]
-    ]
-  },
-  "total_train_time_sec": 116.39115285873413,
-  "vocab_size": 20000,
-  "max_len": 200,
-  "embed_dim": 100,
-  "num_filters": 100,
-  "kernel_sizes": [
-    3,
-    4,
-    5
-  ],
-  "epochs": 4,
-  "embedding_type": "trainable (random init, NOT pretrained GloVe)"
+  "best_epoch": 5,
+  "total_train_time_sec": 24.117465019226074,
+  "total_tuning_time_sec": 57.615060806274414,
+  "device": "cuda",
+  "seed": 42
 }

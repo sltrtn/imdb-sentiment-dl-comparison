@@ -1,0 +1,475 @@
+{
+  "model": "BiLSTM",
+  "selection_metric": "val_f1",
+  "tuning": [
+    {
+      "name": "bilstm-128-frozen",
+      "config": {
+        "hidden_dim": 128,
+        "num_layers": 1,
+        "dropout": 0.5,
+        "lr": 0.001,
+        "freeze_embeddings": true,
+        "batch_size": 64,
+        "max_len": 256,
+        "vocab_size": 48820,
+        "embed_dim": 100,
+        "embedding_type": "GloVe glove-wiki-gigaword-100 (frozen)",
+        "glove_coverage": 0.8490925478307182
+      },
+      "n_params": 235777,
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.6559415377987756,
+          "val_loss": 0.5885712016105652,
+          "val_acc": 0.7076,
+          "val_f1": 0.7044076021027093,
+          "epoch_time_sec": 5.184618711471558
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.6172257639884948,
+          "val_loss": 0.4902612388134003,
+          "val_acc": 0.7744,
+          "val_f1": 0.7763679619349723,
+          "epoch_time_sec": 4.426403760910034
+        },
+        {
+          "epoch": 3,
+          "train_loss": 0.4769966059419844,
+          "val_loss": 0.4511641610622406,
+          "val_acc": 0.7884,
+          "val_f1": 0.8124778447359092,
+          "epoch_time_sec": 4.5020647048950195
+        },
+        {
+          "epoch": 4,
+          "train_loss": 0.44234897022247316,
+          "val_loss": 0.3869968378067017,
+          "val_acc": 0.8208,
+          "val_f1": 0.8254091971940763,
+          "epoch_time_sec": 4.34679913520813
+        },
+        {
+          "epoch": 5,
+          "train_loss": 0.42565507096714444,
+          "val_loss": 0.42663580770492554,
+          "val_acc": 0.7968,
+          "val_f1": 0.8208744710860366,
+          "epoch_time_sec": 4.298823118209839
+        },
+        {
+          "epoch": 6,
+          "train_loss": 0.41157998028331333,
+          "val_loss": 0.3708187636852264,
+          "val_acc": 0.8248,
+          "val_f1": 0.8362004487658938,
+          "epoch_time_sec": 4.255835771560669
+        },
+        {
+          "epoch": 7,
+          "train_loss": 0.407455550204383,
+          "val_loss": 0.3635149748802185,
+          "val_acc": 0.8412,
+          "val_f1": 0.8442526480972931,
+          "epoch_time_sec": 4.2793662548065186
+        },
+        {
+          "epoch": 8,
+          "train_loss": 0.39188028042581347,
+          "val_loss": 0.35933600029945373,
+          "val_acc": 0.8384,
+          "val_f1": 0.8467374810318664,
+          "epoch_time_sec": 4.287214756011963
+        }
+      ],
+      "best_epoch": 8,
+      "train_time_sec": 35.620182514190674,
+      "val": {
+        "accuracy": 0.8384,
+        "precision": 0.7971428571428572,
+        "recall": 0.9029126213592233,
+        "f1": 0.8467374810318664,
+        "confusion_matrix": [
+          [
+            980,
+            284
+          ],
+          [
+            120,
+            1116
+          ]
+        ],
+        "roc_auc": 0.9272747173405433,
+        "loss": 0.35933600029945373
+      },
+      "test": {
+        "accuracy": 0.84372,
+        "precision": 0.802166115760602,
+        "recall": 0.91248,
+        "f1": 0.8537744676073207,
+        "confusion_matrix": [
+          [
+            9687,
+            2813
+          ],
+          [
+            1094,
+            11406
+          ]
+        ],
+        "roc_auc": 0.9294620544,
+        "loss": 0.3544384069013596
+      }
+    },
+    {
+      "name": "bilstm-128-finetune",
+      "config": {
+        "hidden_dim": 128,
+        "num_layers": 1,
+        "dropout": 0.5,
+        "lr": 0.001,
+        "freeze_embeddings": false,
+        "batch_size": 64,
+        "max_len": 256,
+        "vocab_size": 48820,
+        "embed_dim": 100,
+        "embedding_type": "GloVe glove-wiki-gigaword-100 (fine-tuned)",
+        "glove_coverage": 0.8490925478307182
+      },
+      "n_params": 5117777,
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.6306748054610358,
+          "val_loss": 0.551359282207489,
+          "val_acc": 0.7488,
+          "val_f1": 0.7411376751854906,
+          "epoch_time_sec": 5.883907318115234
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.431468376159668,
+          "val_loss": 0.46633598799705506,
+          "val_acc": 0.83,
+          "val_f1": 0.8446069469835467,
+          "epoch_time_sec": 5.644341707229614
+        },
+        {
+          "epoch": 3,
+          "train_loss": 0.3115896999438604,
+          "val_loss": 0.3439833060264587,
+          "val_acc": 0.8528,
+          "val_f1": 0.8609221466364324,
+          "epoch_time_sec": 5.651313543319702
+        },
+        {
+          "epoch": 4,
+          "train_loss": 0.23279801430304845,
+          "val_loss": 0.29763336262702944,
+          "val_acc": 0.8804,
+          "val_f1": 0.8811133200795228,
+          "epoch_time_sec": 5.624291658401489
+        },
+        {
+          "epoch": 5,
+          "train_loss": 0.1736175992992189,
+          "val_loss": 0.3678686013221741,
+          "val_acc": 0.8792,
+          "val_f1": 0.882398753894081,
+          "epoch_time_sec": 5.715344667434692
+        },
+        {
+          "epoch": 6,
+          "train_loss": 0.1301552062034607,
+          "val_loss": 0.32352167329788206,
+          "val_acc": 0.8828,
+          "val_f1": 0.8802615447486718,
+          "epoch_time_sec": 5.669918060302734
+        },
+        {
+          "epoch": 7,
+          "train_loss": 0.10114213995138804,
+          "val_loss": 0.37859509477615355,
+          "val_acc": 0.8808,
+          "val_f1": 0.8818398096748612,
+          "epoch_time_sec": 5.681153774261475
+        }
+      ],
+      "best_epoch": 5,
+      "train_time_sec": 39.892744064331055,
+      "val": {
+        "accuracy": 0.8792,
+        "precision": 0.8506006006006006,
+        "recall": 0.9166666666666666,
+        "f1": 0.882398753894081,
+        "confusion_matrix": [
+          [
+            1065,
+            199
+          ],
+          [
+            103,
+            1133
+          ]
+        ],
+        "roc_auc": 0.9521399164311172,
+        "loss": 0.3678686013221741
+      },
+      "test": {
+        "accuracy": 0.8668,
+        "precision": 0.85085705540251,
+        "recall": 0.88952,
+        "f1": 0.8697590738423029,
+        "confusion_matrix": [
+          [
+            10551,
+            1949
+          ],
+          [
+            1381,
+            11119
+          ]
+        ],
+        "roc_auc": 0.9386842559999999,
+        "loss": 0.39822932655334475
+      }
+    },
+    {
+      "name": "bilstm-256-finetune",
+      "config": {
+        "hidden_dim": 256,
+        "num_layers": 1,
+        "dropout": 0.4,
+        "lr": 0.0005,
+        "freeze_embeddings": false,
+        "batch_size": 64,
+        "max_len": 256,
+        "vocab_size": 48820,
+        "embed_dim": 100,
+        "embedding_type": "GloVe glove-wiki-gigaword-100 (fine-tuned)",
+        "glove_coverage": 0.8490925478307182
+      },
+      "n_params": 5615697,
+      "history": [
+        {
+          "epoch": 1,
+          "train_loss": 0.6521399158053928,
+          "val_loss": 0.6712694131851197,
+          "val_acc": 0.6328,
+          "val_f1": 0.7201219512195122,
+          "epoch_time_sec": 10.802900552749634
+        },
+        {
+          "epoch": 2,
+          "train_loss": 0.5501128318998548,
+          "val_loss": 0.469498588514328,
+          "val_acc": 0.7712,
+          "val_f1": 0.7924528301886793,
+          "epoch_time_sec": 10.62131118774414
+        },
+        {
+          "epoch": 3,
+          "train_loss": 0.4431616682953305,
+          "val_loss": 0.41746544308662414,
+          "val_acc": 0.818,
+          "val_f1": 0.8304137159895639,
+          "epoch_time_sec": 10.669503211975098
+        },
+        {
+          "epoch": 4,
+          "train_loss": 0.35394285094738004,
+          "val_loss": 0.3365671983718872,
+          "val_acc": 0.86,
+          "val_f1": 0.8604465709728868,
+          "epoch_time_sec": 10.780452489852905
+        },
+        {
+          "epoch": 5,
+          "train_loss": 0.27880205577214556,
+          "val_loss": 0.35210696520805357,
+          "val_acc": 0.8568,
+          "val_f1": 0.8667163067758749,
+          "epoch_time_sec": 10.837197303771973
+        },
+        {
+          "epoch": 6,
+          "train_loss": 0.23592778191566469,
+          "val_loss": 0.3029062886238098,
+          "val_acc": 0.8728,
+          "val_f1": 0.8693508627773213,
+          "epoch_time_sec": 10.964689493179321
+        },
+        {
+          "epoch": 7,
+          "train_loss": 0.18595872441662684,
+          "val_loss": 0.2854855506896973,
+          "val_acc": 0.8792,
+          "val_f1": 0.8765331152902698,
+          "epoch_time_sec": 11.04715085029602
+        },
+        {
+          "epoch": 8,
+          "train_loss": 0.14706514378653632,
+          "val_loss": 0.35216044783592226,
+          "val_acc": 0.8752,
+          "val_f1": 0.88,
+          "epoch_time_sec": 11.024157047271729
+        }
+      ],
+      "best_epoch": 8,
+      "train_time_sec": 86.78580737113953,
+      "val": {
+        "accuracy": 0.8752,
+        "precision": 0.8387096774193549,
+        "recall": 0.9255663430420712,
+        "f1": 0.88,
+        "confusion_matrix": [
+          [
+            1044,
+            220
+          ],
+          [
+            92,
+            1144
+          ]
+        ],
+        "roc_auc": 0.9545280559993446,
+        "loss": 0.35216044783592226
+      },
+      "test": {
+        "accuracy": 0.86228,
+        "precision": 0.8369670362378153,
+        "recall": 0.89984,
+        "f1": 0.8672655075369136,
+        "confusion_matrix": [
+          [
+            10309,
+            2191
+          ],
+          [
+            1252,
+            11248
+          ]
+        ],
+        "roc_auc": 0.9384287104000002,
+        "loss": 0.3958395305919647
+      }
+    }
+  ],
+  "best": "bilstm-128-finetune",
+  "val": {
+    "accuracy": 0.8792,
+    "precision": 0.8506006006006006,
+    "recall": 0.9166666666666666,
+    "f1": 0.882398753894081,
+    "confusion_matrix": [
+      [
+        1065,
+        199
+      ],
+      [
+        103,
+        1133
+      ]
+    ],
+    "roc_auc": 0.9521399164311172,
+    "loss": 0.3678686013221741
+  },
+  "test": {
+    "accuracy": 0.8668,
+    "precision": 0.85085705540251,
+    "recall": 0.88952,
+    "f1": 0.8697590738423029,
+    "confusion_matrix": [
+      [
+        10551,
+        1949
+      ],
+      [
+        1381,
+        11119
+      ]
+    ],
+    "roc_auc": 0.9386842559999999,
+    "loss": 0.39822932655334475
+  },
+  "config": {
+    "hidden_dim": 128,
+    "num_layers": 1,
+    "dropout": 0.5,
+    "lr": 0.001,
+    "freeze_embeddings": false,
+    "batch_size": 64,
+    "max_len": 256,
+    "vocab_size": 48820,
+    "embed_dim": 100,
+    "embedding_type": "GloVe glove-wiki-gigaword-100 (fine-tuned)",
+    "glove_coverage": 0.8490925478307182
+  },
+  "n_params": 5117777,
+  "history": [
+    {
+      "epoch": 1,
+      "train_loss": 0.6306748054610358,
+      "val_loss": 0.551359282207489,
+      "val_acc": 0.7488,
+      "val_f1": 0.7411376751854906,
+      "epoch_time_sec": 5.883907318115234
+    },
+    {
+      "epoch": 2,
+      "train_loss": 0.431468376159668,
+      "val_loss": 0.46633598799705506,
+      "val_acc": 0.83,
+      "val_f1": 0.8446069469835467,
+      "epoch_time_sec": 5.644341707229614
+    },
+    {
+      "epoch": 3,
+      "train_loss": 0.3115896999438604,
+      "val_loss": 0.3439833060264587,
+      "val_acc": 0.8528,
+      "val_f1": 0.8609221466364324,
+      "epoch_time_sec": 5.651313543319702
+    },
+    {
+      "epoch": 4,
+      "train_loss": 0.23279801430304845,
+      "val_loss": 0.29763336262702944,
+      "val_acc": 0.8804,
+      "val_f1": 0.8811133200795228,
+      "epoch_time_sec": 5.624291658401489
+    },
+    {
+      "epoch": 5,
+      "train_loss": 0.1736175992992189,
+      "val_loss": 0.3678686013221741,
+      "val_acc": 0.8792,
+      "val_f1": 0.882398753894081,
+      "epoch_time_sec": 5.715344667434692
+    },
+    {
+      "epoch": 6,
+      "train_loss": 0.1301552062034607,
+      "val_loss": 0.32352167329788206,
+      "val_acc": 0.8828,
+      "val_f1": 0.8802615447486718,
+      "epoch_time_sec": 5.669918060302734
+    },
+    {
+      "epoch": 7,
+      "train_loss": 0.10114213995138804,
+      "val_loss": 0.37859509477615355,
+      "val_acc": 0.8808,
+      "val_f1": 0.8818398096748612,
+      "epoch_time_sec": 5.681153774261475
+    }
+  ],
+  "best_epoch": 5,
+  "total_train_time_sec": 39.892744064331055,
+  "total_tuning_time_sec": 162.29873394966125,
+  "device": "cuda",
+  "seed": 42
+}

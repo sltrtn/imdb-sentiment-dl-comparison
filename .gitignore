@@ -1,5 +1,10 @@
 aclImdb/
 aclImdb_v1.tar.gz
+data/
 splits.json
+.hf_cache/
 __pycache__/
 *.pyc
+.venv/
+venv/
+models/

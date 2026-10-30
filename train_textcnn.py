@@ -1,159 +1,248 @@
-import json, time, os, re
+"""TextCNN sentiment classifier on IMDB.
+
+Kim (2014) style architecture: 100-d embeddings -> parallel 1-D convolutions with
+kernel sizes 3/4/5 -> global max-pooling -> dropout -> linear classifier.
+
+The interim run used randomly initialised, trainable embeddings. This version
+supports initialising the embedding matrix from GloVe (glove-wiki-gigaword-100)
+and selects among a few configurations on the validation split. The winning
+configuration is evaluated once on the official test set.
+
+Results -> textcnn_results.json
+
+Usage:
+    python3 train_textcnn.py                 # full config search
+    python3 train_textcnn.py --configs 0 1   # subset
+"""
+
+import argparse
+import re
+import time
 from collections import Counter
 
-import numpy as np
 import torch
 import torch.nn as nn
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader, Dataset
 
-ROOT = os.path.dirname(os.path.abspath(__file__))
-torch.manual_seed(42)
-np.random.seed(42)
-
-with open(os.path.join(ROOT, "splits.json")) as f:
-    data = json.load(f)
-
-tr_texts, tr_labels = data["train"]["texts"], data["train"]["labels"]
-val_texts, val_labels = data["val"]["texts"], data["val"]["labels"]
-test_texts, test_labels = data["test"]["texts"], data["test"]["labels"]
+from common import (
+    binary_metrics,
+    count_parameters,
+    embedding_matrix,
+    get_device,
+    load_glove,
+    load_splits,
+    save_json,
+    set_seed,
+)
 
 TOKEN_RE = re.compile(r"[a-z']+")
+PAD, UNK = 0, 1
+
+# (name, embed_init, freeze_embeddings, max_len, num_filters, lr)
+CONFIGS = [
+    ("textcnn-rand-200", "random", False, 200, 100, 1e-3),
+    ("textcnn-glove-200", "glove", False, 200, 100, 1e-3),
+    ("textcnn-glove-300", "glove", False, 300, 128, 1e-3),
+]
+
 
 def tokenize(t):
     return TOKEN_RE.findall(t.lower())
 
-print("Building vocabulary...")
-counter = Counter()
-for t in tr_texts:
-    counter.update(tokenize(t))
 
-VOCAB_SIZE = 20000
-MAX_LEN = 200
-most_common = counter.most_common(VOCAB_SIZE - 2)  # reserve 0=pad, 1=unk
-word2idx = {w: i + 2 for i, (w, _) in enumerate(most_common)}
-PAD, UNK = 0, 1
+def build_vocab(texts, vocab_size=20000, min_freq=1):
+    counter = Counter()
+    for t in texts:
+        counter.update(tokenize(t))
+    words = [w for w, c in counter.most_common() if c >= min_freq][: vocab_size - 2]
+    return {w: i + 2 for i, w in enumerate(words)}
 
-def encode(text):
-    ids = [word2idx.get(tok, UNK) for tok in tokenize(text)]
-    ids = ids[:MAX_LEN]
-    ids = ids + [PAD] * (MAX_LEN - len(ids))
+
+def encode(text, word2idx, max_len):
+    ids = [word2idx.get(tok, UNK) for tok in tokenize(text)][:max_len]
+    ids += [PAD] * (max_len - len(ids))
     return ids
 
+
 class IMDBDataset(Dataset):
-    def __init__(self, texts, labels):
-        self.X = [encode(t) for t in texts]
+    def __init__(self, texts, labels, word2idx, max_len):
+        self.X = [encode(t, word2idx, max_len) for t in texts]
         self.y = labels
+
     def __len__(self):
         return len(self.y)
-    def __getitem__(self, idx):
-        return torch.tensor(self.X[idx], dtype=torch.long), torch.tensor(self.y[idx], dtype=torch.float32)
 
-print("Encoding splits...")
-train_ds = IMDBDataset(tr_texts, tr_labels)
-val_ds = IMDBDataset(val_texts, val_labels)
-test_ds = IMDBDataset(test_texts, test_labels)
+    def __getitem__(self, i):
+        return torch.tensor(self.X[i], dtype=torch.long), torch.tensor(self.y[i], dtype=torch.float32)
 
-train_loader = DataLoader(train_ds, batch_size=64, shuffle=True)
-val_loader = DataLoader(val_ds, batch_size=256)
-test_loader = DataLoader(test_ds, batch_size=256)
 
 class TextCNN(nn.Module):
-    def __init__(self, vocab_size, embed_dim=100, num_filters=100, kernel_sizes=(3, 4, 5), dropout=0.5):
+    def __init__(self, vocab_size, embedding_matrix=None, embed_dim=100, num_filters=100,
+                 kernel_sizes=(3, 4, 5), dropout=0.5, freeze_embeddings=False):
         super().__init__()
         self.embedding = nn.Embedding(vocab_size, embed_dim, padding_idx=PAD)
-        self.convs = nn.ModuleList([
-            nn.Conv1d(embed_dim, num_filters, k) for k in kernel_sizes
-        ])
+        if embedding_matrix is not None:
+            self.embedding.weight.data.copy_(torch.from_numpy(embedding_matrix))
+        self.embedding.weight.requires_grad = not freeze_embeddings
+        self.convs = nn.ModuleList([nn.Conv1d(embed_dim, num_filters, k) for k in kernel_sizes])
         self.dropout = nn.Dropout(dropout)
         self.fc = nn.Linear(num_filters * len(kernel_sizes), 1)
 
     def forward(self, x):
-        emb = self.embedding(x).transpose(1, 2)  # (B, embed_dim, L)
-        feats = []
-        for conv in self.convs:
-            c = torch.relu(conv(emb))
-            pooled = torch.max(c, dim=2).values
-            feats.append(pooled)
-        out = torch.cat(feats, dim=1)
-        out = self.dropout(out)
-        return self.fc(out).squeeze(1)
+        emb = self.embedding(x).transpose(1, 2)  # (B, E, L)
+        feats = [torch.relu(conv(emb)).max(dim=2).values for conv in self.convs]
+        return self.fc(self.dropout(torch.cat(feats, dim=1))).squeeze(1)
 
-device = torch.device("cpu")
-model = TextCNN(vocab_size=VOCAB_SIZE).to(device)
-optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
-criterion = nn.BCEWithLogitsLoss()
 
-def run_eval(loader):
+def run_eval(model, loader, criterion, device):
     model.eval()
-    all_preds, all_labels = [], []
-    total_loss = 0.0
+    total_loss, n = 0.0, 0
+    scores, labels = [], []
     with torch.no_grad():
         for xb, yb in loader:
             xb, yb = xb.to(device), yb.to(device)
             logits = model(xb)
+            total_loss += criterion(logits, yb).item() * xb.size(0)
+            n += xb.size(0)
+            scores.append(torch.sigmoid(logits).cpu())
+            labels.append(yb.cpu())
+    scores = torch.cat(scores).numpy()
+    labels = torch.cat(labels).numpy()
+    return total_loss / n, (scores > 0.5).astype(int), labels, scores
+
+
+def train_config(cfg, splits, glove, device, epochs, patience, seed):
+    name, embed_init, freeze, max_len, num_filters, lr = cfg
+    set_seed(seed)
+    train, val, test = splits
+
+    word2idx = build_vocab(train["texts"])
+    emb = None
+    coverage = 0.0
+    if embed_init == "glove":
+        emb, coverage = embedding_matrix(word2idx, glove, seed=seed)
+
+    loaders = {}
+    for split_name, split in [("train", train), ("val", val), ("test", test)]:
+        ds = IMDBDataset(split["texts"], split["labels"], word2idx, max_len)
+        loaders[split_name] = DataLoader(
+            ds,
+            batch_size=64 if split_name == "train" else 256,
+            shuffle=split_name == "train",
+            generator=torch.Generator().manual_seed(seed) if split_name == "train" else None,
+        )
+
+    model = TextCNN(len(word2idx) + 2, emb, num_filters=num_filters, freeze_embeddings=freeze).to(device)
+    optimizer = torch.optim.Adam((p for p in model.parameters() if p.requires_grad), lr=lr)
+    criterion = nn.BCEWithLogitsLoss()
+
+    print(f"\n=== {name}: init={embed_init} max_len={max_len} filters={num_filters} lr={lr} "
+          f"freeze_embeddings={freeze} params={count_parameters(model):,} ===")
+    best_f1, best_state, best_epoch, history = -1.0, None, 0, []
+    t_start = time.time()
+    for epoch in range(1, epochs + 1):
+        model.train()
+        t0 = time.time()
+        total_loss, n = 0.0, 0
+        for xb, yb in loaders["train"]:
+            xb, yb = xb.to(device), yb.to(device)
+            optimizer.zero_grad()
+            logits = model(xb)
             loss = criterion(logits, yb)
+            loss.backward()
+            optimizer.step()
             total_loss += loss.item() * xb.size(0)
-            preds = (torch.sigmoid(logits) > 0.5).float()
-            all_preds.extend(preds.cpu().numpy().tolist())
-            all_labels.extend(yb.cpu().numpy().tolist())
-    avg_loss = total_loss / len(all_labels)
-    return np.array(all_preds), np.array(all_labels), avg_loss
+            n += xb.size(0)
+        train_loss = total_loss / n
+        val_loss, val_pred, val_true, val_scores = run_eval(model, loaders["val"], criterion, device)
+        val_metrics = binary_metrics(val_true, val_pred, val_scores)
+        elapsed = time.time() - t0
+        print(f"epoch {epoch:02d}/{epochs} train_loss={train_loss:.4f} val_loss={val_loss:.4f} "
+              f"val_acc={val_metrics['accuracy']:.4f} val_f1={val_metrics['f1']:.4f} ({elapsed:.1f}s)")
+        history.append({"epoch": epoch, "train_loss": train_loss, "val_loss": val_loss,
+                        "val_acc": val_metrics["accuracy"], "val_f1": val_metrics["f1"],
+                        "epoch_time_sec": elapsed})
+        if val_metrics["f1"] > best_f1:
+            best_f1, best_epoch = val_metrics["f1"], epoch
+            best_state = {k: v.detach().cpu().clone() for k, v in model.state_dict().items()}
+        elif epoch - best_epoch >= patience:
+            print(f"early stopping at epoch {epoch} (best epoch {best_epoch})")
+            break
+    train_time = time.time() - t_start
 
-EPOCHS = 4
-history = []
-t_start = time.time()
-for epoch in range(1, EPOCHS + 1):
-    model.train()
-    t0 = time.time()
-    total_loss = 0.0
-    n = 0
-    for xb, yb in train_loader:
-        xb, yb = xb.to(device), yb.to(device)
-        optimizer.zero_grad()
-        logits = model(xb)
-        loss = criterion(logits, yb)
-        loss.backward()
-        optimizer.step()
-        total_loss += loss.item() * xb.size(0)
-        n += xb.size(0)
-    train_loss = total_loss / n
-    val_preds, val_labels_arr, val_loss = run_eval(val_loader)
-    val_acc = (val_preds == val_labels_arr).mean()
-    epoch_time = time.time() - t0
-    print(f"Epoch {epoch}/{EPOCHS} train_loss={train_loss:.4f} val_loss={val_loss:.4f} val_acc={val_acc:.4f} time={epoch_time:.1f}s")
-    history.append({"epoch": epoch, "train_loss": train_loss, "val_loss": val_loss, "val_acc": val_acc, "epoch_time_sec": epoch_time})
+    model.load_state_dict(best_state)
+    val_loss, val_pred, val_true, val_scores = run_eval(model, loaders["val"], criterion, device)
+    test_loss, test_pred, test_true, test_scores = run_eval(model, loaders["test"], criterion, device)
+    val_metrics = binary_metrics(val_true, val_pred, val_scores)
+    test_metrics = binary_metrics(test_true, test_pred, test_scores)
+    val_metrics["loss"] = val_loss
+    test_metrics["loss"] = test_loss
+    print(f"[{name}] val  acc={val_metrics['accuracy']:.4f} f1={val_metrics['f1']:.4f}")
+    print(f"[{name}] test acc={test_metrics['accuracy']:.4f} f1={test_metrics['f1']:.4f}")
 
-total_train_time = time.time() - t_start
+    return {
+        "name": name,
+        "config": {
+            "embed_init": embed_init,
+            "freeze_embeddings": freeze,
+            "max_len": max_len,
+            "vocab_size": len(word2idx) + 2,
+            "embed_dim": 100,
+            "num_filters": num_filters,
+            "kernel_sizes": [3, 4, 5],
+            "dropout": 0.5,
+            "lr": lr,
+            "batch_size": 64,
+            "glove_coverage": coverage,
+            "embedding_type": "GloVe glove-wiki-gigaword-100 (fine-tuned)" if embed_init == "glove"
+            else "trainable (random init)",
+        },
+        "n_params": count_parameters(model),
+        "history": history,
+        "best_epoch": best_epoch,
+        "train_time_sec": train_time,
+        "val": val_metrics,
+        "test": test_metrics,
+    }
 
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
-def full_eval(loader, name):
-    preds, labels_arr, loss = run_eval(loader)
-    acc = accuracy_score(labels_arr, preds)
-    prec = precision_score(labels_arr, preds)
-    rec = recall_score(labels_arr, preds)
-    f1 = f1_score(labels_arr, preds)
-    cm = confusion_matrix(labels_arr, preds)
-    print(f"[{name}] acc={acc:.4f} prec={prec:.4f} rec={rec:.4f} f1={f1:.4f} loss={loss:.4f}")
-    print(f"[{name}] confusion matrix:\n{cm}")
-    return {"accuracy": acc, "precision": prec, "recall": rec, "f1": f1, "loss": loss, "confusion_matrix": cm.tolist()}
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--epochs", type=int, default=6)
+    ap.add_argument("--patience", type=int, default=2)
+    ap.add_argument("--seed", type=int, default=42)
+    ap.add_argument("--configs", type=int, nargs="*", default=None)
+    args = ap.parse_args()
 
-results = {
-    "history": history,
-    "val": full_eval(val_loader, "val"),
-    "test": full_eval(test_loader, "test"),
-    "total_train_time_sec": total_train_time,
-    "vocab_size": VOCAB_SIZE,
-    "max_len": MAX_LEN,
-    "embed_dim": 100,
-    "num_filters": 100,
-    "kernel_sizes": [3, 4, 5],
-    "epochs": EPOCHS,
-    "embedding_type": "trainable (random init, NOT pretrained GloVe)",
-}
+    device = get_device()
+    print(f"device: {device}")
+    splits = tuple(load_splits())
+    glove = load_glove()
 
-with open(os.path.join(ROOT, "textcnn_results.json"), "w") as f:
-    json.dump(results, f, indent=2)
+    indices = args.configs if args.configs is not None else range(len(CONFIGS))
+    runs = [train_config(CONFIGS[i], splits, glove, device, args.epochs, args.patience, args.seed)
+            for i in indices]
 
-print("Saved textcnn_results.json")
-print(f"Total train time: {total_train_time:.1f}s")
+    best = max(runs, key=lambda r: r["val"]["f1"])
+    print(f"\nBest config: {best['name']} (val f1={best['val']['f1']:.4f})")
+
+    save_json({
+        "model": "TextCNN",
+        "selection_metric": "val_f1",
+        "tuning": runs,
+        "best": best["name"],
+        "val": best["val"],
+        "test": best["test"],
+        "config": best["config"],
+        "n_params": best["n_params"],
+        "history": best["history"],
+        "best_epoch": best["best_epoch"],
+        "total_train_time_sec": best["train_time_sec"],
+        "total_tuning_time_sec": sum(r["train_time_sec"] for r in runs),
+        "device": str(device),
+        "seed": args.seed,
+    }, "textcnn_results.json")
+
+
+if __name__ == "__main__":
+    main()
